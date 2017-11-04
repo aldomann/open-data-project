@@ -33,7 +33,7 @@ detroit.df <- fread(file="data/detroit_clean.csv", sep = ",", header = TRUE, sel
 # Merge crime types in more general categories
 detroit.df <- detroit.df %>% mutate(Category = ifelse(CATEGORY == "LARCENY" | CATEGORY == "BURGLARY" | CATEGORY == "LIQUOR LAW VIOLATION" | CATEGORY == "STOLEN VEHICLE" | CATEGORY == "ARSON" | CATEGORY == "CRIMINAL DAMAGE", "PROPERTY CRIMES", ifelse(CATEGORY == "BATTERY" | CATEGORY == "ROBBERY" | CATEGORY=="ASSAULT" | CATEGORY =="AGGRAVATED ASSAULT" | CATEGORY == "SEX OFFENSE" | CATEGORY == "STALKING" | CATEGORY == "KIDNAPPING" | CATEGORY == "HOMICIDE" | CATEGORY == "INTIMIDATION" | CATEGORY == "HUMAN TRAFFICKING", "VIOLENT CRIMES", "QUALITY OF LIFE CRIMES")))
 
-# Select most important variables
+# Select the most important variables
 detroit.df <- detroit.df[, c(2,3,5,6)]
 
 # Functions gathering geolocalization data
@@ -53,4 +53,13 @@ latitude <- function(x){
 detroit.df$longitude <- sapply(detroit.df$LOCATION, function(x) longitude(x) )
 detroit.df$latitude <- sapply(detroit.df$LOCATION, function(x) latitude(x) )
 
+# Selecting the even more important variables
 detroit.df <- detroit.df[,c(1,2,4,5,6)]
+
+# Date formats
+detroit.df$date <- as.Date(detroit.df$INCIDENTDATE , "%d/%m/%Y %H:%M:%S")
+
+
+# Selecting final variables
+detroit.df <- detroit.df[, c(3, 4, 5, 6, 2)]
+colnames(detroit.df)[5] <- "hour"
