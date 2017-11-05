@@ -57,9 +57,19 @@ detroit.df$latitude <- sapply(detroit.df$LOCATION, function(x) latitude(x) )
 detroit.df <- detroit.df[,c(1,2,4,5,6)]
 
 # Date formats
-detroit.df$date <- as.Date(detroit.df$INCIDENTDATE , "%d/%m/%Y %H:%M:%S")
-
+detroit.df$date <- as.Date(detroit.df$INCIDENTDATE , "%m/%d/%Y %H:%M:%S")
+detroit.df$date <- format(detroit.df$date, "%Y-%m-%d")
 
 # Selecting final variables
 detroit.df <- detroit.df[, c(3, 4, 5, 6, 2)]
 colnames(detroit.df)[5] <- "hour"
+
+# Delete invalid rows
+detroit.df <- detroit.df[ ! detroit.df$latitude > 1000, ]
+detroit.df <- na.omit(detroit.df)
+
+# Create definitive file
+path = "data/detroit_final.csv"
+if (!file.exists(path)){
+	write_csv(detroit.df, path)
+}
