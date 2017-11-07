@@ -68,6 +68,13 @@ colnames(detroit.df)[5] <- "hour"
 detroit.df <- detroit.df[ ! detroit.df$latitude > 1000, ]
 detroit.df <- na.omit(detroit.df)
 
+# Final Summary
+colnames(detroit.df) <- c("Category", "Latitude", "Longitude",  "Date", "Hour")
+detroit.df <- detroit.df %>%
+	group_by(Category, year = year(Date), month = month(Date)) %>%
+	summarise(N=n())
+
+
 # Create definitive file
 path = "data/detroit_final.csv"
 if (!file.exists(path)){
