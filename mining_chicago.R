@@ -51,7 +51,7 @@ chicago.df <- chicago.df %>%
 
 # Chicago Population ------------------------------------------------------
 
-pop.file = "data/population_chicago.csv"
+pop.file = "pop-data/population_chicago.csv"
 chicago.pop <- fread(pop.file, sep = ";", header= TRUE, select = c(1,2))
 chicago.pop$population <- as.numeric(gsub(",", "", chicago.pop$population))
 
@@ -59,7 +59,7 @@ chicago.df <- merge(chicago.df, chicago.pop)
 chicago.df$population <- chicago.df$population
 
 # Create definitive file
-path = "data/chicago_final.csv"
+path = "pop-data/chicago_final.csv"
 if (!file.exists(path)){
 	write_csv(chicago.df, path)
 }
