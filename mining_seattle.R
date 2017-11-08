@@ -38,4 +38,28 @@ seattle.df <- seattle.df %>%
 	filter(is.na(Longitude) != TRUE)
 
 # Merge crime types in more general categories
-chicago.df <- chicago.df %>% mutate(Category = ifelse(Primary.Type == "THEFT" | Primary.Type == "BURGLARY" | Primary.Type == "RESIDENTIAL BURGLARIES"| Primary.Type == "LIQUOR VIOLATIONS" | Primary.Type == "PROPERTY DAMAGE" | Primary.Type == "COMMERCIAL BURGLARIES" | Primary.Type == "AUTO THEFTS" | Primary.Type == "MOTOR VEHICLE THEFT" | Primary.Type == "ARSON" | Primary.Type == "CRIMINAL DAMAGE", "PROPERTY CRIMES", ifelse(Primary.Type == "BATTERY" | Primary.Type == "ROBBERY"| Primary.Type == "TRESPASS" | Primary.Type=="ASSAULT" | Primary.Type =="CRIM SEXUAL ASSAULT" | Primary.Type == "SEX OFFENSE" | Primary.Type == "STALKING" | Primary.Type == "KIDNAPPING" | Primary.Type == "THRESATS, HARASSMENT" | Primary.Type == "CASUALTIES" | Primary.Type == "HOMICIDE" | Primary.Type == "SEX OFFENSE" | Primary.Type == "INTIMIDATION" | Primary.Type == "HUMAN TRAFFICKING", "VIOLENT CRIMES", "QUALITY OF LIFE CRIMES")))
+seattle.df <- seattle.df %>% mutate(Category = ifelse(Primary.Type == "THEFT" | Primary.Type == "BURGLARY" | Primary.Type == "RESIDENTIAL BURGLARIES"| Primary.Type == "LIQUOR VIOLATIONS" | Primary.Type == "PROPERTY DAMAGE" | Primary.Type == "COMMERCIAL BURGLARIES" | Primary.Type == "AUTO THEFTS" | Primary.Type == "MOTOR VEHICLE THEFT" | Primary.Type == "ARSON" | Primary.Type == "CRIMINAL DAMAGE", "PROPERTY CRIMES", ifelse(Primary.Type == "BATTERY" | Primary.Type == "ROBBERY"| Primary.Type == "TRESPASS" | Primary.Type=="ASSAULT" | Primary.Type =="CRIM SEXUAL ASSAULT" | Primary.Type == "SEX OFFENSE" | Primary.Type == "STALKING" | Primary.Type == "KIDNAPPING" | Primary.Type == "THRESATS, HARASSMENT" | Primary.Type == "CASUALTIES" | Primary.Type == "HOMICIDE" | Primary.Type == "SEX OFFENSE" | Primary.Type == "INTIMIDATION" | Primary.Type == "HUMAN TRAFFICKING", "VIOLENT CRIMES", "QUALITY OF LIFE CRIMES")))
+
+# Final columns
+seattle.df <- seattle.df[,c(2,5)]
+
+# Final summary
+seattle.df <- seattle.df %>%
+	group_by(Category, year = year(Date), month = month(Date)) %>%
+	summarise(N=n())
+
+
+# Seattle Population ------------------------------------------------------
+
+pop.file = "pop-data/population_seattle.csv"
+seattle.pop <- fread(pop.file, sep = ";", header= TRUE, select = c(1,2))
+seattle.pop$population <- as.numeric(gsub(",", "", seattle.pop$population))
+
+seattle.df <- merge(seattle.df, seattle.pop)
+seattle.df$population <- seattle.df$population
+
+# Create definitive file
+path = "pop-data/seattle_final.csv"
+if (!file.exists(path)){
+	write_csv(seattle.df, path)
+}
