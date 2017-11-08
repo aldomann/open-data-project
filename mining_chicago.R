@@ -11,7 +11,7 @@ library(dplyr)
 library(lubridate)
 
 
-# Mining Chicago Data ------------------------------------------------
+# Mining Chicago Data Crime ------------------------------------------------
 
 # Download raw data
 chicago.crimes.file = "data/chicago_raw.csv"
@@ -47,6 +47,16 @@ chicago.df <- chicago.df[,-c(2,3)]
 chicago.df <- chicago.df %>%
 	group_by(Category, year = year(Date), month = month(Date)) %>%
 	summarise(N=n())
+
+
+# Chicago Population ------------------------------------------------------
+
+pop.file = "data/population_chicago.csv"
+chicago.pop <- fread(pop.file, sep = ";", header= TRUE, select = c(1,2))
+chicago.pop$population <- as.numeric(gsub(",", "", chicago.pop$population))
+
+chicago.df <- merge(chicago.df, chicago.pop)
+chicago.df$population <- chicago.df$population
 
 # Create definitive file
 path = "data/chicago_final.csv"
