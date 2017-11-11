@@ -12,6 +12,8 @@ library(leaflet)
 library(dplyr)
 library(datasets)
 library(curl) # make the jsonlite suggested dependency explicit
+library(zoo)
+library(xts)
 
 
 # UI -------------------------------------------------------
@@ -29,15 +31,17 @@ sidebar <- dashboardSidebar(
 							conditionalPanel("input.sidebarmenu === 'single'",
 								checkboxGroupInput("categories", "Category",
 																	 choices = c(
-																		 "Total Crimes" = 1,
-																		 "Property Crimes" = 2,
-																		 "Violent Crimes" = 3
+																		 "Total Crimes" = "Total",
+																		 "Property Crimes" = "Property",
+																		 "Violent Crimes" = "Violent",
+																		 "Other Crimes" = "Other"
 																	 ),
-																	 selected = c(1,2,3)
+																	 selected = c("Total")
 								),
-								selectInput("city", "City",
+								selectInput("city.single", "City",
 														choices = c(
 															"Chicago",
+															"Detroit",
 															"New York City",
 															"San Francisco"
 														),
@@ -73,7 +77,7 @@ body.cond <- dashboardBody(
 	conditionalPanel(
 		condition = "input.sidebarmenu === 'single'",
 		h2("Single city analysis"),
-		dygraphOutput("plot1")
+		dygraphOutput("single.plot")
 	),
 
 	conditionalPanel(
@@ -91,7 +95,7 @@ body <- dashboardBody(
 
 		tabItem(tabName = "single",
 			h2("Single city analysis"),
-			dygraphOutput("plot1")
+			dygraphOutput("single.plot")
 		),
 
 		tabItem(tabName = "compare",
@@ -113,9 +117,33 @@ ui <- dashboardPage(
 
 server <- function(input, output) {
 
-	output$plot1 <- renderDygraph({
-		lungDeaths <- cbind(ldeaths, mdeaths, fdeaths)
-		dyRangeSelector(dygraph(lungDeaths, main = "Deaths from Lung Disease (UK)"), dateWindow = c("1974-01-01", "1980-01-01"))
+	output$single.plot <- renderDygraph({
+
+	single.df <- read.csv(paste0("data/", tolower(input$city.single), ".csv")) %>%
+		mutate(Date = as.Date(as.character(paste(year, month, 01, sep = "-"), "%Y-%m-%d")))
+
+	df.prop <- single.df %>%
+		filter(Category == "PROPERTY CRIMES") %>%
+		mutate(Property = N) %>%
+		select(Date, Property)
+
+	df.viol <- single.df %>%
+		filter(Category == "VIOLENT CRIMES") %>%
+		mutate(Violent = N) %>%
+		select(Date, Violent)
+
+	df.oth <- single.df %>%
+		filter(Category == "QUALITY OF LIFE CRIMES") %>%
+		mutate(Other = N) %>%
+		select(Date, Other)
+
+	single.df <- merge(merge(df.prop, df.viol, all = TRUE), df.oth, all = TRUE)
+	single.df[is.na(single.df)] <- 0
+	single.df <- single.df %>%
+		mutate(Total = Property + Violent + Other)
+
+		single.ts <- xts(cbind(single.df[,input$categories]), order.by=single.df$Date)
+		dyRangeSelector(dygraph(single.ts, main = paste("Crimes in", input$city.single)))
 	})
 
 	output$plot2 <- renderDygraph({
