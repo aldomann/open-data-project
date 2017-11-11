@@ -25,8 +25,8 @@ header <- dashboardHeader(
 sidebar <- dashboardSidebar(
 	sidebarMenu(id = "sidebarmenu",
 							menuItem("About this App", tabName = "home",  icon = icon("home")),
-							menuItem("Single City", tabName = "single",  icon = icon("building"), selected = T),
-							menuItem("Compare Cities", tabName = "compare", icon = icon("globe")),
+							menuItem("Single City", tabName = "single",  icon = icon("building")),
+							menuItem("Compare Cities", tabName = "compare", icon = icon("globe"), selected = T),
 
 							conditionalPanel("input.sidebarmenu === 'single'",
 								checkboxGroupInput("categories", "Category",
@@ -36,13 +36,12 @@ sidebar <- dashboardSidebar(
 																		 "Violent Crimes" = "Violent",
 																		 "Other Crimes" = "Other"
 																	 ),
-																	 selected = c("Total")
+																	 selected = c("Total", "Property", "Violent", "Other")
 								),
 								selectInput("city.single", "City",
 														choices = c(
 															"Chicago",
 															"Detroit",
-															"New York City",
 															"San Francisco"
 														),
 														selected = "Chicago",
@@ -57,10 +56,10 @@ sidebar <- dashboardSidebar(
 								selectInput("cities", "City",
 														choices = c(
 															"Chicago",
-															"New York City",
+															"Detroit",
 															"San Francisco"
 															),
-														selected = c("Chicago", "New York City"),
+														selected = c("Chicago", "Detroit"),
 														multiple = TRUE,
 														selectize = TRUE
 								)
@@ -83,7 +82,7 @@ body.cond <- dashboardBody(
 	conditionalPanel(
 		condition = "input.sidebarmenu === 'compare'",
 		h2("Comparison between cities"),
-		dygraphOutput("plot2")
+		dygraphOutput("compare.plot")
 	)
 )
 
@@ -100,7 +99,7 @@ body <- dashboardBody(
 
 		tabItem(tabName = "compare",
 			h2("Comparison between cities"),
-			dygraphOutput("plot2")
+			dygraphOutput("compare.plot")
 		)
 	)
 )
@@ -118,37 +117,59 @@ ui <- dashboardPage(
 server <- function(input, output) {
 
 	output$single.plot <- renderDygraph({
+		# Read data
+		single.df <- read.csv(paste0("data/", tolower(input$city.single), ".csv")) %>%
+			mutate(Date = as.Date(as.character(paste(year, month, 01, sep = "-"), "%Y-%m-%d")))
 
-	single.df <- read.csv(paste0("data/", tolower(input$city.single), ".csv")) %>%
-		mutate(Date = as.Date(as.character(paste(year, month, 01, sep = "-"), "%Y-%m-%d")))
+		# Clean data
+		df.prop <- single.df %>%
+			filter(Category == "PROPERTY CRIMES") %>%
+			mutate(Property = N) %>%
+			select(Date, Property)
 
-	df.prop <- single.df %>%
-		filter(Category == "PROPERTY CRIMES") %>%
-		mutate(Property = N) %>%
-		select(Date, Property)
+		df.viol <- single.df %>%
+			filter(Category == "VIOLENT CRIMES") %>%
+			mutate(Violent = N) %>%
+			select(Date, Violent)
 
-	df.viol <- single.df %>%
-		filter(Category == "VIOLENT CRIMES") %>%
-		mutate(Violent = N) %>%
-		select(Date, Violent)
+		df.oth <- single.df %>%
+			filter(Category == "QUALITY OF LIFE CRIMES") %>%
+			mutate(Other = N) %>%
+			select(Date, Other)
 
-	df.oth <- single.df %>%
-		filter(Category == "QUALITY OF LIFE CRIMES") %>%
-		mutate(Other = N) %>%
-		select(Date, Other)
+		# Merge data
+		single.df <- Reduce(function(...) merge(..., all=TRUE), list(df.prop, df.viol, df.oth))
+		single.df[is.na(single.df)] <- 0
+		single.df <- single.df %>%
+			mutate(Total = Property + Violent + Other)
 
-	single.df <- merge(merge(df.prop, df.viol, all = TRUE), df.oth, all = TRUE)
-	single.df[is.na(single.df)] <- 0
-	single.df <- single.df %>%
-		mutate(Total = Property + Violent + Other)
-
+		# Create time series
 		single.ts <- xts(cbind(single.df[,input$categories]), order.by=single.df$Date)
 		dyRangeSelector(dygraph(single.ts, main = paste("Crimes in", input$city.single)))
 	})
 
-	output$plot2 <- renderDygraph({
-		lungDeaths <- cbind(ldeaths, mdeaths, fdeaths)
-		dyRangeSelector(dygraph(lungDeaths, main = "Births from Lung Disease (UK)"), dateWindow = c("1974-01-01", "1980-01-01"))
+	output$compare.plot <- renderDygraph({
+		# Read and clean data
+		cities.lst <- list()
+		cities.df <- data.frame()
+		for (city in input$cities) {
+			cityname <- paste0(city)
+			df <- read.csv(paste0("data/", tolower(city), ".csv"))
+
+			df <- df %>%
+				mutate(Date = as.Date(as.character(paste(year, month, 01, sep = "-"), "%Y-%m-%d"))) %>%
+				group_by(Date) %>%
+				dplyr::summarise(!!cityname := sum(N))
+
+			cities.lst[[city]] <- df
+		}
+
+		# Merge data
+		cities.df <- Reduce(function(...) merge(..., all = TRUE), cities.lst)
+
+		# Create time series
+		compare.ts <- xts(cbind(cities.df[,input$cities]), order.by=cities.df$Date)
+		dyRangeSelector(dygraph(compare.ts, main = paste("Crimes in ...")))
 	})
 
 }
