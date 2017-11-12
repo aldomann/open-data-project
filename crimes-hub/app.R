@@ -28,7 +28,7 @@ sidebar <- dashboardSidebar(
 							menuItem("Single City", tabName = "single",  icon = icon("building")),
 							menuItem("Compare Cities", tabName = "compare", icon = icon("globe"), selected = T),
 
-							conditionalPanel("input.sidebarmenu === 'single'",
+							conditionalPanel("input.sidebarmenu == 'single'",
 								checkboxGroupInput("categories", "Category",
 																	 choices = c(
 																		 "Total Crimes" = "Total",
@@ -50,9 +50,16 @@ sidebar <- dashboardSidebar(
 								)
 							),
 
-							conditionalPanel("input.sidebarmenu === 'compare'",
-								checkboxInput("norm", "Normalise data",
-															value = FALSE),
+							conditionalPanel("input.sidebarmenu == 'compare'",
+								# checkboxInput("norm", "Normalise data",
+								# 							value = FALSE),
+								radioButtons("norm", "Normalisation",
+														 choices = c(
+														 	"None" = "",
+														 	"By mean" = "mean",
+														 	"By population" = "pop"
+														 )),
+
 								selectInput("cities", "City",
 														choices = c(
 															"Chicago",
@@ -69,18 +76,18 @@ sidebar <- dashboardSidebar(
 
 body.cond <- dashboardBody(
 	conditionalPanel(
-		condition = "input.sidebarmenu === 'home'",
+		condition = "input.sidebarmenu == 'home'",
 		h2("Home page")
 	),
 
 	conditionalPanel(
-		condition = "input.sidebarmenu === 'single'",
+		condition = "input.sidebarmenu == 'single'",
 		h2("Single city analysis"),
 		dygraphOutput("single.plot")
 	),
 
 	conditionalPanel(
-		condition = "input.sidebarmenu === 'compare'",
+		condition = "input.sidebarmenu == 'compare'",
 		h2("Comparison between cities"),
 		dygraphOutput("compare.plot")
 	)
@@ -155,11 +162,24 @@ server <- function(input, output) {
 		for (city in input$cities) {
 			cityname <- paste0(city)
 			df <- read.csv(paste0("data/", tolower(city), ".csv"))
-
 			df <- df %>%
 				mutate(Date = as.Date(as.character(paste(year, month, 01, sep = "-"), "%Y-%m-%d"))) %>%
 				group_by(Date) %>%
-				dplyr::summarise(!!cityname := sum(N))
+				dplyr::summarise(N = sum(N))
+
+			if ( input$norm == "mean" ) {
+				df <- df %>%
+					mutate(!!cityname := N/mean(N)) %>%
+					select(Date, !!cityname)
+			} else if (input$norm == "pop" ){
+				df <- df %>%
+					mutate(!!cityname := N/mean(N)) %>%
+					select(Date, !!cityname)
+			} else {
+				df <- df %>%
+					mutate(!!cityname := N) %>%
+					select(Date, !!cityname)
+			}
 
 			cities.lst[[city]] <- df
 		}
