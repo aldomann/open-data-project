@@ -1,6 +1,6 @@
 # List of primary types
 
-# Finished Cities: Chicago, Detroit, San Francisco, Seattle, Honolulu, Baltimore, Washington, Philadelphia
+# Finished Cities: Chicago, Detroit, San Francisco, Seattle, Honolulu, Baltimore, Washington, Philadelphia, New York City, Atlanta
 
 property <- c(
 	"ARSON",
@@ -56,7 +56,11 @@ property <- c(
 	"AGRICULTURE & MRKTS LAW-UNCLASSIFIED" ,
 	"BURGLAR'S TOOLS" ,
 	"FRAUDS" ,
-	"FRAUDULENT ACCOSTING"
+	"FRAUDULENT ACCOSTING",
+	"LARCENY-NON VEHICLE",
+	"LARCENY-FROM VEHICLE",
+	"BURGLARY-RESIDENCE",
+	"BURGLARY-NONRES"
 )
 
 # End property -----
@@ -125,7 +129,11 @@ violent <- c(
 	"KIDNAPPING AND RELATED OFFENSES",
 	"MURDER & NON-NEGL. MANSLAUGHTER",
 	"ASSAULT 3 & RELATED OFFENSES" ,
-	"FELONY ASSAULT"
+	"FELONY ASSAULT",
+	"AGG ASSAULT",
+	"ROBBERY-PEDESTRIAN",
+	"ROBBERY-RESIDENCE",
+	"ROBBERY-COMMERCIAL"
 )
 # End Violent ---------------------------------------------------------------
 
