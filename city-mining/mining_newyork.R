@@ -59,7 +59,7 @@ newyork.pop$population <- as.numeric(gsub(",", "", newyork.pop$population))
 newyork.df <- merge(newyork.df, newyork.pop)
 newyork.df$population <- newyork.df$population
 
-newyork.df <- newyork.df[!newyork.df$year<2000,]
+newyork.df <- newyork.df[!newyork.df$year<2014,]
 
 # Create definitive file
 path = "final-data/newyork_final.csv"
