@@ -1,0 +1,15 @@
+*.aux
+*.bbl
+*.bcf
+*.blg
+*.fdb*
+*.fls
+*.gz
+*.key
+*.log
+*.nav
+*.out
+*.run*
+*.snm
+*.toc
+*.lol
