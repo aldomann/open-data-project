@@ -34,8 +34,8 @@ seattle.df <- fread(file="data/seattle_clean.csv", sep = ",", header = TRUE)
 seattle.df <- seattle.df %>%
 	dplyr::rename(Primary.Type = `Event Clearance SubGroup`) %>%
 	dplyr::rename(Date = `Event Clearance Date`) %>%
-	mutate(Date = mdy_hms(Date)) %>%
-	filter(is.na(Longitude) != TRUE)
+	mutate(Date = mdy_hms(Date))  # %>%
+	# filter(is.na(Longitude) != TRUE)
 
 # Classify crimes in categories
 source("prim_types_functions.R")
