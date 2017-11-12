@@ -63,6 +63,8 @@ atlanta.pop$population <- as.numeric(gsub(",", "", atlanta.pop$population))
 atlanta.df <- merge(atlanta.df, atlanta.pop)
 atlanta.df$population <- atlanta.df$population
 
+atlanta.df <- atlanta.df[!atlanta.df$year<2009,]
+
 # Create definitive file
 path = "final-data/atlanta_final.csv"
 if (!file.exists(path)){
