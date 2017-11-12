@@ -38,9 +38,13 @@ sanfrancisco.df <- sanfrancisco.df %>%
 	mutate(Date = format(as.Date(sanfrancisco.df$Date, format="%m/%d/%Y"), "%Y-%m-%d")) %>%
 	filter(is.na(Longitude) != TRUE)
 
+# Classify crimes in categories
+source("prim_types_functions.R")
+find_new_prim_type(sanfrancisco.df)
 
-# Merge crime types in more general categories
-sanfrancisco.df <- sanfrancisco.df %>% mutate(Category = ifelse(Primary.Type == "THEFT" | Primary.Type == "BURGLARY" | Primary.Type == "LIQUOR LAW VIOLATION" | Primary.Type == "MOTOR VEHICLE THEFT" | Primary.Type == "ARSON" | Primary.Type == "CRIMINAL DAMAGE", "PROPERTY CRIMES", ifelse(Primary.Type == "BATTERY" | Primary.Type == "ROBBERY" | Primary.Type=="ASSAULT" | Primary.Type =="CRIM SEXUAL ASSAULT" | Primary.Type == "SEX OFFENSE" | Primary.Type == "STALKING" | Primary.Type == "KIDNAPPING" | Primary.Type == "HOMICIDE" | Primary.Type == "INTIMIDATION" | Primary.Type == "HUMAN TRAFFICKING", "VIOLENT CRIMES", "QUALITY OF LIFE CRIMES")))
+sanfrancisco.df <- sanfrancisco.df %>%
+	mutate(Category = find_prim_type(Primary.Type))
+
 
 # Final columns
 sanfrancisco.df <- sanfrancisco.df[,-c(1)]
@@ -49,6 +53,15 @@ sanfrancisco.df <- sanfrancisco.df[,-c(1)]
 sanfrancisco.df <- sanfrancisco.df %>%
 	group_by(Category, year = year(Date), month = month(Date)) %>%
 	summarise(N=n())
+
+# San Francisco Population ------------------------------------------------------
+
+pop.file = "pop-data/population_sanfrancisco.csv"
+sanfrancisco.pop <- fread(pop.file, sep = ";", header= TRUE, select = c(1,2))
+sanfrancisco.pop$population <- as.numeric(gsub(",", "", sanfrancisco.pop$population))
+
+sanfrancisco.df <- merge(sanfrancisco.df, sanfrancisco.pop)
+sanfrancisco.df$population <- sanfrancisco.df$population
 
 # Create definitive file
 path = "final-data/sanfrancisco_final.csv"
