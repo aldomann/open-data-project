@@ -11,7 +11,7 @@ library(dplyr)
 library(lubridate)
 
 
-# Mining New York Data ------------------------------------------------
+# Mining Seattle Data ------------------------------------------------
 
 # Download raw data
 seattle.crimes.file = "data/seattle_raw.csv"
