@@ -64,7 +64,7 @@ chicago.df <- merge(chicago.df, chicago.pop)
 chicago.df$population <- chicago.df$population
 
 # Create definitive file
-path = "data/chicago_final.csv"
+path = "final-data/chicago_final.csv"
 if (!file.exists(path)){
 	write_csv(chicago.df, path)
 }

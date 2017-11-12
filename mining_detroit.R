@@ -91,7 +91,7 @@ detroit.df$population <- detroit.df$population
 
 
 # Create definitive file
-path = "data/detroit_final.csv"
+path = "final-data/detroit_final.csv"
 if (!file.exists(path)){
 	write_csv(detroit.df, path)
 }
