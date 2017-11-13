@@ -6,13 +6,9 @@ library(shiny)
 # UI Libs
 library(shinydashboard)
 library(dygraphs)
-library(leaflet)
 
 # Server Libs
 library(dplyr)
-library(datasets)
-library(curl) # make the jsonlite suggested dependency explicit
-library(zoo)
 library(xts)
 
 
