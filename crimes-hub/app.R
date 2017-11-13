@@ -159,7 +159,6 @@ server <- function(input, output) {
 
 		# Create time series
 		single.ts <- xts(cbind(single.df[,input$categories]), order.by=single.df$Date)
-		# dyRangeSelector(dygraph(single.ts, main = paste("Evolution of crimes in", input$city.single)))
 		dyRangeSelector(
 			dyOptions(
 				dygraph(single.ts, main = paste("Evolution of crimes in", input$city.single)),
@@ -204,8 +203,10 @@ server <- function(input, output) {
 		compare.ts <- xts(cbind(cities.df[,input$cities]), order.by=cities.df$Date)
 		dyRangeSelector(
 			dyOptions(
-				dygraph(compare.ts, main = paste("Evolution of crimes")),
-				strokeWidth = 2)
+				dygraph(compare.ts, main = paste("Evolution of crimes")) %>%
+					dyLegend(width = 400),
+				strokeWidth = 2),
+			dateWindow = c("2009-01-01", "2016-12-01")
 		)
 	})
 
