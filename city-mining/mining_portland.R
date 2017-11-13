@@ -17,8 +17,8 @@ library(data.table)
 # Download raw data
 portland.crimes.file = "data/portland_raw.csv"
 if (!file.exists(portland.crimes.file)) {
-	# SRC: https://data.cityofportland.org/Public-Safety/Crimes-2001-to-present/ijzp-q8t2
-	download.file("https://www.portlandopendata.com/api/views/p9zb-d4n6/rows.csv?accessType=DOWNLOAD", destfile = portland.crimes.file)
+	# SRC: https://www.portlandoregon.gov/police/71978
+	download.file("https://public.tableau.com/vizql/vud/sessions/4C330E7EAE5B4D0390ECCB8D2E5810EC-0:0/views/11785674312584914872_6350070509696140914?csv=true&summary=true", destfile = portland.crimes.file)
 }
 
 # Read interesting columns and save into a CSV

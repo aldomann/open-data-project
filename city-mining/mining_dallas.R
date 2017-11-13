@@ -17,7 +17,7 @@ library(data.table)
 # Download raw data
 dallas.crimes.file = "data/dallas_raw.csv"
 if (!file.exists(dallas.crimes.file)) {
-	# SRC: https://data.cityofdallas.org/Public-Safety/Crimes-2001-to-present/ijzp-q8t2
+	# SRC: https://www.dallasopendata.com/Public-Safety/All-Crime/p9zb-d4n6
 	download.file("https://www.dallasopendata.com/api/views/p9zb-d4n6/rows.csv?accessType=DOWNLOAD", destfile = dallas.crimes.file)
 }
 
