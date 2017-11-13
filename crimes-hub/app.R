@@ -24,11 +24,16 @@ header <- dashboardHeader(
 
 cities.list <- c(
 	"Atlanta",
+	"Austin",
 	"Baltimore",
 	"Chicago",
+	"Dallas",
 	"Detroit",
+	"Los Angeles",
+	"Minneapolis",
 	"New York",
 	"Philadelphia",
+	"Portland",
 	"San Francisco",
 	"Seattle",
 	"Washington"
@@ -48,7 +53,7 @@ sidebar <- dashboardSidebar(
 																		 "Violent Crimes" = "Violent",
 																		 "Other Crimes" = "Other"
 																	 ),
-																	 selected = c("Total", "Property", "Violent", "Other")
+																	 selected = c("Total", "Property", "Violent")
 								),
 								selectInput("city.single", "City",
 														choices = cities.list,
