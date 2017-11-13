@@ -30,8 +30,8 @@ cities.list <- c(
 sidebar <- dashboardSidebar(
 	sidebarMenu(
 		id = "sidebarmenu",
-		menuItem("About this App", tabName = "home",  icon = icon("home")),
-		menuItem("Single City", tabName = "single",  icon = icon("building"), selected = T),
+		menuItem("About this App", tabName = "home",  icon = icon("home"), selected = T),
+		menuItem("Single City", tabName = "single",  icon = icon("building")),
 		menuItem("Compare Cities", tabName = "compare", icon = icon("globe")),
 
 		conditionalPanel(
@@ -79,7 +79,14 @@ sidebar <- dashboardSidebar(
 body <- dashboardBody(
 	tabItems(
 		tabItem(tabName = "home",
-						h2("About this project")
+						h2("About this project"),
+						includeMarkdown("body.md"),
+						actionButton(
+							inputId='ab1', label="Fork us",
+							icon = icon("github"),
+							onclick ="window.open(
+							'https://github.com/aldomann/open-data-project', '_blank')"
+							)
 		),
 
 		tabItem(tabName = "single",
