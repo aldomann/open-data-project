@@ -1,9 +1,16 @@
-# List of primary types
+# Functions classify the Primary Type of crime data (UCR)
+# Authors: Cristian Estany <cresbabellpuig@gmail.com>
+#          Alfredo Hernández <aldomann.designs@gmail.com>
+#          Alejandro Jiménez <aljrico@gmail.com>
 
-# Finished Cities: Chicago, Detroit, San Francisco, Seattle, Honolulu, Baltimore, Washington, Philadelphia, New York City, Atlanta
+# Finished Cities: Chicago, Detroit, San Francisco,
+#                  Seattle, Honolulu, Baltimore,
+#                  Washington, Philadelphia, New York City,
+#                  Atlanta, Minneapolis, Austin,
+#                  Dallas, Portland, Los Angeles
 
-# Start Property -----
 
+# Start Propert --------------------------------------------
 property <- c(
 	"AGRICULTURE & MRKTS LAW-UNCLASSIFIED",
 	"ALL OTHER LARCENY",
@@ -175,8 +182,7 @@ property <- c(
 
 # End Property -----
 
-# Start Violent ----
-
+# Start Violent --------------------------------------------
 violent <- c(
 	"1ST DEG DOMES ASSLT",
 	"2ND DEG DOMES ASLT",
@@ -327,7 +333,7 @@ violent <- c(
 )
 # End Violent ----
 
-# Start Other ----
+# Start Other ----------------------------------------------
 other <- c(
 	" ",
 	"",
@@ -482,10 +488,18 @@ other <- c(
 
 # End Other ----
 
+
+
+# Functions ------------------------------------------------
+
+# Classify primary type into Categories
 find_prim_type <- function(a){
-	return (ifelse(toupper(a) %in% toupper(property), "PROPERTY", ifelse(toupper(a) %in% toupper(violent), "VIOLENT", "OTHER")))
+	return (ifelse(toupper(a) %in% toupper(property), "PROPERTY",
+								 ifelse(toupper(a) %in% toupper(violent), "VIOLENT",
+												"OTHER")))
 }
 
+# List non-classified primary types
 find_new_prim_type <- function(df){
 	list <- c(unique(toupper(df$Primary.Type)))
 	new <- c()
