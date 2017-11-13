@@ -7,7 +7,7 @@ library(dygraphs)
 # UI -------------------------------------------------------
 
 header <- dashboardHeader(
-	title = "Crimes Hub"
+	title = "Crimes Data Hub"
 )
 
 cities.list <- c(
