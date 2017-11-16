@@ -118,6 +118,7 @@
 \tikzset{square arrow/.style={to path={-- ++(0,-.25) -| (\tikztotarget)}}}
 \usepackage{cancel}
 
+\newcommand*\acr[1]{\textscale{.85}{#1}}
 
 %-----------------------------------------------------------------
 %	OTHER PACKAGES
@@ -390,19 +391,35 @@
 %-----------------------------------------------------------------
 %	BIBLIOGRAPHY
 %-----------------------------------------------------------------
-% \nocite{Domingo2012}
-\nocite{Beardsley2014}
-\nocite{Wortley2008}
-\nocite{McCue2015}
-\nocite{Boba2004}
-\nocite{ChicagoPoliceDepartment2017}
 
-\printbibliography[heading=bibintoc]
-% \setcounter{secnumdepth}{0}
-% \section{References}
+\nocite{ds:minneapolis}
+\nocite{ds:bmore}
+\nocite{ds:nyc}
+\nocite{ds:}
+\nocite{ds:la}
+\nocite{ds:seattle}
+\nocite{ds:dallas}
+\nocite{ds:sanfran}
+\nocite{ds:chicago}
+\nocite{ds:detroit}
+\nocite{ds:washington}
+\nocite{ds:philly}
+\nocite{ds:atlanta}
+\nocite{ds:portlant}
+
+\nocite{l:cc-0}
+\nocite{l:cc-bysa3}
+\nocite{l:pddl1}
+\nocite{l:by1}
+
+% \printbibliography[heading=bibintoc]
+\setcounter{secnumdepth}{0}
+\section{References}
 % \printbibliography[title={Articles}, type=article, heading=subbibliography]
 % \printbibliography[title={Books}, type=book, heading=subbibliography]
 % \printbibliography[title={Websites}, type=online , heading=subbibliography]
-% \printbibliography[title={Other}, type=misc , heading=subbibliography]
+\printbibliography[title={Basic}, keyword=basic , heading=subbibliography]
+\printbibliography[title={Data Sets}, keyword=dataset , heading=subbibliography]
+\printbibliography[title={Licenses}, keyword=license , heading=subbibliography]
 
 \end{document}

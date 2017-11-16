@@ -3,48 +3,280 @@
 %	!TEX root = ./../main.tex
 %-----------------------------------------------------------------
 \section{Tools and data}
-% SHOULD INCLUDE:
-%	Data life-cycle description
-%	Tools and data used
-%	Legal (license of the data) and ethical issues (not appliable)
 
 \subsection{Data description}
 
-\begin{table}[H]
+Before starting mining the data and programming the scripts needed for this project, we wanted to familiarise ourselves with Crime Analysis both from an academic and a real-life point of view.
+
+From the academic perspective, we found \cite{Boba2004} and \cite{Beardsley2014} incredibly insightful to see why data sets are structured in the way they are: Police Departments across the United States use the Uniform Crime Reporting (UCR) Program, a national standard of classifying crime uniformly that disregards state laws, providing a way to consistently count crime across the US.
+
+On the real-life side of things, we really liked how the Chicago Tribune has a dedicated data hub on crime statistics~\cite{o:chiago-tribune} open for citizens to explore. The main feature of this data hub is the time series visualisation of crimes in the city by month (depicted in figure~\ref{fig:tribune}).
+
+\begin{figure}[H]
 	\centering
-	\label{tab:city-list}
-	\begin{tabular}{l l l l l}
-	\toprule
-	\toprule
-	City          & State          & Region    & Life Cycle            & License \\
-	\midrule
-	Atlanta       & Georgia        & South     & \numrange{2009}{2016} &         \\
-	Austin        & Texas          & South     & \numrange{2014}{2015} &         \\
-	Baltimore     & Maryland       & Northeast & \numrange{2012}{2016} &         \\
-	Chicago       & Illinois       & Midwest   & \numrange{2001}{2016} &         \\
-	Dallas        & Texas          & South     & \numrange{2014}{2016} &         \\
-	Detroit       & Michigan       & Midwest   & \numrange{2011}{2014} &         \\
-	Los Angeles   & California     & West      & \numrange{2010}{2016} &         \\
-	Metro Area    & Washington, DC & Northeast & \numrange{2008}{2016} &         \\
-	Minneapolis   & Minnesota      & Midwest   & \numrange{2010}{2016} &         \\
-	New York City & New York       & Northeast & \numrange{2014}{2016} &         \\
-	Philadelphia  & Pennsylvania   & Northeast & \numrange{2006}{2016} &         \\
-	Portland      & Oregon         & West      & \numrange{2015}{2016} &         \\
-	San Francisco & California     & West      & \numrange{2003}{2016} &         \\
-	Seattle       & Washington     & West      & \numrange{2009}{2016} & \\
-	\bottomrule
-	\end{tabular}
-	\caption{Caption here}
-\end{table}
+	\includegraphics[width=\textwidth]{images/tribune}
+	\caption{\emph{Crime in Chicago by month}, from \cite{o:chiago-tribune}}
+	\label{fig:tribune}
+\end{figure}
+
+A really interesting aspect about this visualisation is that they divide crimes into three categories: (i) violent crimes, (ii) property crimes, and (iii) quality of life crimes.
+
+We took this time series as a template of how we wanted to visualise data in our Data Hub. The main difference will be how we categorise crimes; there is some literature on how property and violent crimes are defined~\cite{Beardsley2014}, but quality of life crimes are very difficult to define. For this reason we decided to use \emph{other crimes} as a third category (we explain this categorisation process in \cref{sec:data-mining}). Apart from all this, we think it is important to include the amount of total crimes as well, as it could be really useful for an exploratory analysis.
+
+\bigskip
+Having said this, let's discuss on the data sets themselves. As we have mentioned before, our main goal is to analyse crime statistics from different cities across the US. To ensure some kind of evenly distributed sample, we chose to use data sets from 3 to 4 cities for each of the main Cultural Regions of the US (depicted in figure \ref{fig:us-map}).
 
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=\textwidth]{./images/us-map}
-	\caption{Caption here}
+	\caption{Map of the United States divided by the four main Cultural Regions}
 	\label{fig:us-map}
 \end{figure}
 
+In table \ref{tab:city-list} we can see a full description of the data sets, including geographical location, life cycle, size of the data set, and the license under which the data is released.
 
-\subsection{Data mining process}
+At a very first glance we can see how some of the data sets do not specify a license of any kind. The thing is that these databases are initially thought as a tool for Police Departments as a way to ease the report of the statistics to the FBI; the involvement of specialised professionals (that is, data scientists or crime analysts) is relatively new and they may not care about specifying a license at all\footnote{From my personal experience in the Free Software and Science communities (specially the latter), it is usual to see people that do not realise the importance of licensing and compliance.}. We can be thankful to the Police Departments, though, for making available the data in their respective city's Open Data portal. In these cases we assume they do not impose any restriction on the data and that they are Public Domain.
+
+\begin{table}[H]
+	\centering
+	\label{tab:city-list}
+	\resizebox{\textwidth}{!}{%
+	\begin{tabular}{l l l l c l}
+	\toprule
+	\toprule
+	City          & State          & Region    & Life Cycle            & Data Set Size & License       \\
+	\midrule
+	Atlanta       & Georgia        & South     & \numrange{2009}{2016} & \SI{267}{K}  & Not Specified \\
+	Austin        & Texas          & South     & \numrange{2014}{2015} & \SI{159}{K}  & CC0 1.0      \\
+	Baltimore     & Maryland       & Northeast & \numrange{2012}{2016} & \SI{277}{K}  & CC0 1.0      \\
+	Chicago       & Illinois       & Midwest   & \numrange{2001}{2016} & \SI{6.4}{M}  & Not Specified \\
+	Dallas        & Texas          & South     & \numrange{2014}{2016} & \SI{330}{K}  & ODC-By 1.0   \\
+	Detroit       & Michigan       & Midwest   & \numrange{2009}{2016} & \SI{1.2}{M}  & Public Domain \\
+	Los Angeles   & California     & West      & \numrange{2010}{2016} & \SI{1.6}{M}  & CC0 1.0      \\
+	Metro Area    & Washington, DC & Northeast & \numrange{2008}{2016} & \SI{343}{K}  & Not Specified \\
+	Minneapolis   & Minnesota      & Midwest   & \numrange{2010}{2016} & \SI{136}{K}  & CC BY-SA 3.0  \\
+	New York City & New York       & Northeast & \numrange{2014}{2016} & \SI{5.6}{M}  & CC0 1.0      \\
+	Philadelphia  & Pennsylvania   & Northeast & \numrange{2006}{2016} & \SI{343}{K}  & Not Specified \\
+	Portland      & Oregon         & West      & \numrange{2015}{2016} & \SI{140}{K}  & Not Specified \\
+	San Francisco & California     & West      & \numrange{2003}{2016} & \SI{2.1}{M}  & PDDL 1.0     \\
+	Seattle       & Washington     & West      & \numrange{2009}{2016} & \SI{1.5}{M}  & CC0 1.0      \\
+	\bottomrule
+	\end{tabular}}
+	\caption{Summary of the data we gathered during the process of building the Data Hub}
+\end{table}
+
+As a side note, we would like to clarify a bit why we focused on data sets only from the United States. The original scope of our project was to create a truly global Data Hub, gathering data from the Americas, Europe, Asia, etc. We found, alas, that although a powerful Open Data infrastructure does exist for some of the countries we checked (Spain, the Netherlands, Germany, France, the UK, Japan, Hong Kong, South Korea, etc.) the data shines for its absence. Hopefully this will change in the coming years.
+
+The difference between the adoption ratio of Open Data in the United States vs \emph{the rest of the World} is absolutely abysmal. We believe the main reason behind this is the federal organisation of the US, which facilitates the conception of controlled and efficient policies. Another point to keep in mind is that the social and administrative concerns across the US are much more uniform than across Europe, for instance.
+
+%-----------------------------------------------------------------
+\subsection{Data mining process}\label{sec:data-mining}
+
+One of the key points of a functional and stable Data Hub is the standardisation of its data. From one data warehouse to another we can find several different structures, categories and types of variables. So this section is about automating the \emph{data mining} process, in which we shall download and clean all the data, select the more relevant\footnote{Relevant for the purpose of this project, not in an statistical sense} variables and process them in a way so that the final output would be the same for \emph{every} data set.
+
+\subsubsection*{Downloading the data}
+
+As obvious as it may seem, the first thing to do is to download the raw data. Every database has its own \acr{URL} and its own origin; so this has to be treated individually for each city.
+
+Here we show, as an example, a snippet of the code used for that purpose for San Francisco:
+\begin{lstlisting}
+file = "data/sanfrancisco_raw.csv"
+url = "https://data.sfgov.org/api/views/tmnf-yvry/rows.csv"
+download.file(url), destfile = file)
+\end{lstlisting}
+
+One particularly difficult example of this process was the city of Atlanta, for which we had the files separated by years (one file per year) and every file was formatted slightly differently. The challenge here was to merge the files together into a unified data set. For this city we developed an extra specific function for this purpose: \inline{merging_atlanta.R}
+
+\subsubsection*{Reading \& cleaning the data}
+
+Once we have obtained the raw data, the next step is to filter and clean it. This is a subtle point, for the process may be different from one data set to another, and the code has to be specifically tuned for every one of them.
+
+It is usual that most of the variables (columns) in a data set are redundant or simply not necessary for our purpose, so a simple step is to select just those who are needed.  Once we have just the columns we want, the challenge is to format them in a standard way:
+\begin{lstlisting}
+sanfrancisco.df <- fread(file="data/sanfrancisco_raw.csv", sep = ",", header = TRUE, select = c(2,5,10,11))
+
+sanfrancisco.df <- sanfrancisco.df %>%
+	dplyr::rename(Primary.Type = `Category`) %>%
+	dplyr::rename(Longitude = `X`) %>%
+	dplyr::rename(Latitude= `Y`) %>%
+	mutate(Date = format(as.Date(Date, format="%m/%d/%Y"), "%Y-%m-%d")) %>%
+	filter(is.na(Longitude) != TRUE)
+\end{lstlisting}
+
+One particularly difficult situation in this process was found when one column was containing \inline{latitude} and \inline{longitude} in a complicated way, containing names of streets and such stuff. We used regular expressions to process the data and clean the messy structure of the variables:
+\begin{lstlisting}
+# Functions gathering geolocalization data
+longitude <- function(x){
+	a <- strsplit(x, "\\(", fixed = FALSE, perl = FALSE, useBytes = FALSE)[[1]][2]
+	a <- gsub(")","", a)
+	longitude <- as.numeric(strsplit(a, ",")[[1]][1])
+}
+
+latitude <- function(x){
+	a <- strsplit(x, "\\(", fixed = FALSE, perl = FALSE, useBytes = FALSE)[[1]][2]
+	a <- gsub(")","", a)
+	latitude <- as.numeric(strsplit(a, ",")[[1]][2])
+}
+
+# Extracting longitude and latitude
+detroit.df$longitude <- sapply(detroit.df$LOCATION, function(x) longitude(x) )
+detroit.df$latitude <- sapply(detroit.df$LOCATION, function(x) latitude(x) )
+\end{lstlisting}
 
 
+\subsubsection*{Categorising Primary Types}
+
+And then we arrive to the \emph{secret sauce} of this project. One crucial step for the purpose of this project was the classification of crimes. Doing this is quite complicated since there are a huge amount of different names used to classify the typology of crimes, often called \emph{Primary Type}. To fulfil this necessity we have created a function that contains an ever-growing dictionary of classification of crime names. This function classified all kind of crimes into three self-explanatory categories: \emph{Violent Crimes}, \emph{Property Crimes}, and \emph{Other Crimes}.
+
+Considering the immense size of the function, the snippet below shows a small sample of the functions we use for the categorisation process:
+\begin{lstlisting}[label=sn:prim_types, caption=Simplified structure of \inline{prim_types_functions.R}]
+property <- c( "ARSON", "AUTO THEFT", "BIKE THEFT", "BURGLARY", ... )
+
+violent <- c( "AGG ASSAULT", "BATTERY", "HOMICIDE", "MURDER", ... )
+
+other <- c( "DRUNKENNESS", "FORTUNE TELLING", "TRAFFIC", ... )
+
+# Classify primary type into Categories
+find_prim_type <- function(a){
+	return (ifelse(toupper(a) %in% toupper(property), "PROPERTY",
+								 ifelse(toupper(a) %in% toupper(violent), "VIOLENT",
+												"OTHER")))
+}
+
+# List non-classified primary types
+find_new_prim_type <- function(df){
+	list <- c(unique(toupper(df$Primary.Type)))
+	new <- c()
+	for (a in list) {
+		if ( a %in% toupper(property) | a %in% toupper(violent) | a %in% toupper(other) ) {}
+		else { new <- c(new, a) }
+	}
+	return (new)
+}
+\end{lstlisting}
+
+The maintenance of this function is quite complicated, for new crime categories appear with every new data set, and then our \emph{dictionary} has to be expanded.
+
+\subsubsection*{Summarising the data}
+
+Now we have almost all needed variables, but the data set is still too large for being uploaded into a Data Hub to be processed in real time by the server. Now what we do is to summarise the data grouped into months. That is, we put together all crimes occurred at the same month.
+
+\begin{lstlisting}
+sanfrancisco.df <- sanfrancisco.df %>%
+	group_by(Category, year = year(Date), month = month(Date)) %>%
+	summarise(N=n())
+
+\end{lstlisting}
+
+With this, we have obtained a time series of crimes classified by categories.
+
+A usual variable considered in typical crime analysis, is the number of crimes compared to the population of the city; obtaining the crimes per inhabitant. For this, we merged these data sets with the public access population data of every city~\cite{o:population}.
+
+\begin{lstlisting}
+# San Francisco Population ------------------------------------------------------
+
+pop.file = "pop-data/population_sanfrancisco.csv"
+sanfrancisco.pop <- fread(pop.file, sep = ";", header= TRUE, select = c(1,2))
+sanfrancisco.pop$population <- as.numeric(gsub(",", "", sanfrancisco.pop$population))
+
+sanfrancisco.df <- merge(sanfrancisco.df, sanfrancisco.pop)
+sanfrancisco.df$population <- sanfrancisco.df$population
+\end{lstlisting}
+
+\subsubsection*{Deleting invalid data}
+
+At this point we should have the data ready to be easily visualised and analysed. Before uploading the data, a careful exploration is needed to avoid unexpected surprises. By doing this, we spotted some errors or inconsistencies in the data. Usually we found a lot of gaps in the first years of the data sets, comprehensively still getting started; so we just deleted those years in order to maintain the published data consistent and reliable.
+
+Unexpectedly, we have found a strange behaviour in the Seattle data set. There were massive holes within two years of data records. This data set is shown in our public Data Hub for the \emph{proof of concept} version, as an example of badly formatted data (this is expanded in \cref{sec:results}).
+
+\subsubsection*{Saving the processed data set into a file}
+
+Simple as it sounds, we just create a \inline{.csv} file containing the data set.
+
+The success of the whole process is reflected by the fact that the initial raw data was of $\sim \SI{1}{GB}$, whilst the final output is of $\sim \SI{10}{KB}$
+
+
+%-----------------------------------------------------------------
+\subsection{Programming the application}
+
+Since all the data mining process was done using R, we thought that programming the web app using the \inline{shiny} package~\cite{o:shiny} and \url{shinyapps.io}~\cite{o:shinyapps} as the platform for hosting our web app would be the most straightforward process to follow.
+
+In short, the app consists on two parts: a \inline{ui.R} file consisting on the front end (the visual and interactive structure of the web app), and a \inline{server.R} file consisting on the back end (how the data is computed according to the user's interaction). These two files are sourced in the \inline{app.R} base file, allowing us to have a more structured and maintainable code.
+
+In \cref{sn:app.R} we can see the whole \inline{app.R} script. As we can see, the structure is really basic and self-explanatory. The \inline{shiny.sanitize.errors = FALSE} option is used to be able to access the log files from the server, which is essential when debugging the app once it is deployed.
+
+\begin{lstlisting}[label=sn:app.R, caption=Structure of \inline{app.R}]
+## app.R ##
+library(shiny)
+library(markdown)
+
+# Source UI and Server -------------------------------------
+
+options(shiny.sanitize.errors = FALSE)
+
+source("ui.R", local=F)
+source("server.R", local=F)
+
+shinyApp(ui, server)
+\end{lstlisting}
+
+The UI part, \cref{sn:ui.R}, is very reminiscent of what a standard program may look like. We have objects and functions that are called or used in a \emph{main function} (in this case, the \inline{ui} object):
+
+\begin{lstlisting}[label=sn:ui.R, caption=Simplified structure of \inline{ui.R}]
+# Libraries ------------------------------------------------
+
+# UI Libs
+library(shinydashboard)
+library(dygraphs)
+
+# UI -------------------------------------------------------
+
+header <- dashboardHeader(
+	title = "Crimes Data Hub"
+)
+
+cities.list <- c( "Atlanta", "Austin", ... )
+
+sidebar <- dashboardSidebar( ... )
+body <- dashboardBody( ... )
+
+ui <- dashboardPage( skin = "purple", header, sidebar, body )
+\end{lstlisting}
+
+The server part, \cref{sn:server.R}, is probably the most difficult to work with, as you have to be really careful about how the input conditions are used to dynamically modify the data frames R is internally working with.
+
+\begin{lstlisting}[label=sn:server.R, caption=Simplified structure of \inline{server.R}]
+# Libraries ------------------------------------------------
+
+# Server Libs
+library(dplyr)
+library(xts)
+
+# Server ---------------------------------------------------
+
+server <- function(input, output) {
+	output$single.plot <- renderDygraph( { ... } )
+
+	output$compare.plot <- renderDygraph( { ... } )
+}
+\end{lstlisting}
+
+The star of the show in the app is the \inline{dygraphs} library, an R interface to the dygraphs JavaScript charting library. This allows us to:
+\begin{itemize}
+    \item Automatically plot \inline{xts} time series objects.
+    \item Have rich interactive features including zoom/pan and series/point highlighting.
+    \item Have various graph overlays in a same plot.
+\end{itemize}
+
+\bigskip
+
+After finishing the app, we have to deal with the deployment process into the server. Using \url{http://www.shinyapps.io/} instead of a server of our own, the process is really simple. The steps to follow are, in essence:
+\begin{lstlisting}
+# Authenticating (only once)
+rsconnect::setAccountInfo(name, token, secret)
+
+# Deploying the app
+rsconnect::deployApp("crimes-hub")
+\end{lstlisting}
+
+More details about the deployment process can be found on the documentation~\cite{o:shinyapps-docs}.

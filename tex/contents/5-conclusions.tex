@@ -1,8 +1,19 @@
 %-----------------------------------------------------------------
-%	TEMA
+%	CONCLUSIONS
 %	!TEX root = ./../main.tex
 %-----------------------------------------------------------------
 \section{Conclusions}
-% SHOULD INCLUDE:
-% Limitations and future work
-\lipsum[1-2]
+
+Open Data is a quite new movement so it is usually hard to find good Open Data sources that are not unclean, wrongly formatted, or incomplete; making the cleanse of data a necessity. Cleaning data is one of the most tedious steps of data mining, and even more when you are extracting data from many sources and comparing them. For this is a process subject to a lot of unexpected problems, there is no easy nor systematic way to solve them. Specially in the field of \emph{Crime Analytics}, where almost every data set is formatted differently, despite the existence of standard guidelines (the UCR in this case).
+
+During the development of this project, we found out how straightforward and useful it was to explore the data seeking for patterns or insights about the criminal situation of the analysed cities. We can be satisfied about the result of this proof of concept, yet further development would be needed to achieve a final stable product.
+
+\bigskip
+First of all, following the philosophy of \emph{Open Data}, a proper \emph{Data Hub} should facilitate a way to download the cleaned data besides visualising it. Although this shouldn't be difficult we were more focused and concerned about the data extraction and cleaning; and we did not want to jeopardise the stability of the host loading too much traffic data. Since this is just an early stage of our goal project, we will keep this point as one of our first main objectives in the near future in order to improve the \emph{Data Hub}.
+
+Additionally, we would like to expand the city catalogue so the portal can be useful for more users. Our main limitation here was time, we just tried to add as many cities as we could. At this point, the most time-consuming step was the classification of the crime's \emph{Primary Type}, since it is done manually; so we are considering different machine learning techniques to automate this process to save both time and resources. This process could be a project by itself so it lands out of the scope of this one. However, we will keep it as an exciting possibility to enrich and improve our \emph{Crime Data Hub}
+
+Another useful improvement could be the Single City section. We have in mind the addition of geographical data (in the data mining process, we cleaned and prepared \inline{latitude} and \inline{longitude} variables ready to be loaded in the Data Hub, probably in the form of \emph{heat maps} of crime reports in the city map. The visualisation of this kind of data is much more difficult and requires exponentially more resources from the server if we aim to keep the site interactive; so we discarded it for this first stage. Still, we deem it would be a valuable addition and a really useful tool for crime analysts and concerned citizens.
+
+\bigskip
+As a final aspiration, the ultimate goal of future improvements would be to automate the whole data mining process so that we have to intervene as little as possible, enabling us to make the site grow a lot faster.
