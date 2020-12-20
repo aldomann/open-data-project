@@ -13,4 +13,5 @@
 *.snm
 *.toc
 *.lol
-main-blx.bib
+__latexindent_temp.tex
+*-blx.bib
